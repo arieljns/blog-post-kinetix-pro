@@ -51,3 +51,46 @@ exports.getPostById = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 }
+
+
+exports.editPost = async (req, res) => {
+  const postId = req.params.id;
+  const { title, content } = req.body;
+  const userId = req.user.id;
+  try {
+    const editPost = await postService.editPost(postId, title, content, userId);
+    res.status(200).json({
+      message: 'Post updated successfully',
+      post: editPost
+    });
+  } catch (error) {
+    console.log(error)
+    if (error.message === 'POST_NOT_FOUND') {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    if (error.message === 'UNAUTHORIZED') {
+      return res.status(403).json({ message: 'Unauthorized to edit this post' });
+    }
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+exports.deletePost = async (req, res) => {
+  const postId = req.params.id;
+  const userId = req.user.id;
+  try {
+    const deletedPost = await postService.deletePost(postId, userId);
+    res.status(200).json({
+      message: 'Post deleted successfully',
+      post: deletedPost
+    });
+  } catch (error) {
+    if (error.message === 'POST_NOT_FOUND') {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    if (error.message === 'UNAUTHORIZED') {
+      return res.status(403).json({ message: 'Unauthorized to delete this post' });
+    }
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
