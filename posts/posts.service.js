@@ -29,4 +29,29 @@ async function getPostById(postId) {
   }
   return post
 }
-module.exports = { createPost, getAllPosts, getPostById }
+
+async function editPost(postId, title, content, userId) {
+  const post = await posts.findById(postId)
+  if (!post) {
+    throw new Error('POST_NOT_FOUND')
+  }
+  if (post.authorId.toString() !== userId) {
+    throw new Error('UNAUTHORIZED')
+  }
+  const updatedPost = await posts.findByIdAndUpdate(postId, { title, content }, { new: true })
+  return updatedPost
+}
+
+async function deletePost(postId, userId) {
+  const post = await posts.findById(postId)
+  if (!post) {
+    throw new Error('POST_NOT_FOUND')
+  }
+  if (post.authorId.toString() !== userId) {
+    throw new Error('UNAUTHORIZED')
+  }
+  const deletedPost = await posts.findByIdAndDelete(postId)
+  return deletedPost
+}
+
+module.exports = { createPost, getAllPosts, getPostById, editPost, deletePost }
