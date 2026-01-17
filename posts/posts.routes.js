@@ -1,16 +1,13 @@
 const express = require("express");
-const req = require("express/lib/request");
-
+const postsController = require("./posts.controller");
+const authenticationMiddleware = require("../middleware/auth.middleware");
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.status(200).json({ message: "List of blog posts" });
-})
+router.post("/", authenticationMiddleware, postsController.createPost)
 
-router.get("/:id", (req, res) => {
-  const postId = req.params.id;
-  res.status(200).json({ message: `Details of blog post with ID: ${postId}` });
-});
+router.get("/", postsController.getAllPosts);
+
+router.get("/:id", postsController.getPostById);
 
 
 module.exports = router;
