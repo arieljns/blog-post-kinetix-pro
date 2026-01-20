@@ -1,9 +1,8 @@
 const express = require('express');
 
 const router = express.Router();
+const commentsController = require('./comments.controller');
 
-router.get('/', (req, res) => {
-  res.status(200).json({ message: 'List of comments' });
-});
+router.get('/', commentsController.createComment);
 
 module.exports = router;
